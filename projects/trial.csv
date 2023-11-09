@@ -1,0 +1,33 @@
+STEP SETUP
+    CLASS IT320
+    MUSIC https://youtu.be/vlOsVnJNeaU?si=_SeXbuiU7sIplZqi
+    PRESENTATION https://drive.google.com/file/d/1SC7e6PwUcwecmxz89cLiC0nWMBXzaV2W/view?usp=sharing
+    ACTION TIME
+    BUTTON STOPPER
+END
+STEP 1
+    LIGHT RED
+    FAN TRUE
+    SOUND SCREEN
+    SCREEN 1
+    DELAY 500
+END
+STEP 2
+    SCREEN 2
+    FAN FALSE
+    SCENT 1
+    DELAY 500
+END
+STEP 3 
+    SCREEN 3
+    LIGHT FALSE
+    DELAY 500
+END
+STEP 4
+    SCREEN 4
+    DELAY 500
+END
+STEP 5
+    SCREEN OFF
+    DELAY 0
+END
