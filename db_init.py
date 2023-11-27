@@ -1,6 +1,5 @@
-import sqlite3
+from db_conn import conn
 
-conn = sqlite3.connect("local_storage.db")
 cur = conn.cursor()
 
 cur.execute(f"""

@@ -1,13 +1,11 @@
 import os
-import sqlite3
 from collections import namedtuple
+from db_conn import conn
 
-conn = sqlite3.connect("local_storage.db")
 cur = conn.cursor()
-
 os.chdir('./projects')
 WORKING_DIRECTORY = os.getcwd()
-IMPORTANT_PARAMS = ['PRESENTATION', 'ACTION', 'CLASS']
+IMPORTANT_PARAMS = ['PRESENTATION', 'CLASS']
 INSTRUCTION_START = 'STEP'
 INSTRUCTION_END = 'END'
 files = [f for f in os.listdir() if os.path.isfile(f)]
