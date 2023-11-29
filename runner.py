@@ -34,7 +34,15 @@ class Class:
 
 def search_available_classes():
     data = c.execute(f"SELECT serial, name, id FROM class")
-    return data.fetchall()
+    available = {i: {
+        "serial": presentation[0],
+        "name": presentation[1],
+        "id": presentation[2]
+    }
+        for i, presentation in enumerate(data.fetchall())
+    }
+    print(available)
+    return available
 
 
 def run_class(class_id):
@@ -61,9 +69,9 @@ if __name__ == "__main__":
     classes = search_available_classes()
     print("Available classes:")
     print("\tSerial\tName")
-    for i, presentation in enumerate(classes):
-        serial, name, idx = presentation
-        print(f"{i}\t{serial}\t{name}")
+    for k, v in classes.items():
+        print(f"{k}\t{v['serial']}\t{v['name']}")
+
     print("Choose a class to work with:")
     while True:
         try:
@@ -74,4 +82,4 @@ if __name__ == "__main__":
         except ValueError:
             print("Invalid choice. Try again.")
             continue
-    run_class(classes[choice][2])
+    run_class(classes[choice]['id'])
