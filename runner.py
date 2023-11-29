@@ -1,37 +1,19 @@
 import requests
+import sqlite3
 from collections import defaultdict
-from db_init import conn
+from db_conn import DATABASE_NAME, WORKING_PATH
 from pdf_handler import extract_from_local
+import os
 
-c = conn.cursor()
 
 COMPONENTS_API_ADDRESS = '127.0.0.1:8000/api/'
 
 
-class Class:
-    def __init__(self, setupHashmap, instructions) -> None:
-        self.counter = 0
-        self.presentation_link = setupHashmap['PRESENTATION']
-        self.song_link = setupHashmap['SONG'] if 'SONG' in setupHashmap.keys(
-        ) else None
-        self.instructions = [instructions[k] for k in instructions]
-        try:
-            self.presentation_length = self.load_media()
-        except:
-            print("Error loading presentation")
-            exit()
-
-    def load_media(self):
-        # change to extract from google drive first
-        return extract_from_local(self.presentation_link + '.pdf')
-
-    def next_step(self):
-        for k, v in self.instructions[self.counter].items():
-            print(k, v)
-        self.counter += 1
-
-
 def search_available_classes():
+    os.chdir(WORKING_PATH)
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
     data = c.execute(f"SELECT serial, name, id FROM class")
     available = {i: {
         "serial": presentation[0],
@@ -40,43 +22,44 @@ def search_available_classes():
     }
         for i, presentation in enumerate(data.fetchall())
     }
+
+    conn.close()
+
     return available
 
 
-def create_class(class_id):
-    print(f"Running class {class_id}")
+def setup_class(class_id):
+    os.chdir(WORKING_PATH)
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
     data = c.execute(
-        f"SELECT step_number, component, parameter FROM instruction WHERE class_id = {class_id}")
-    instructions = data.fetchall()
-    instructions = sorted(instructions, key=lambda x: x[0])
-    setup = {}
-    while instructions and instructions[0][0] == 0:
-        _, component, parameter = instructions.pop(0)
-        if component not in ['CLASS']:
-            setup[component] = parameter
-    steps = defaultdict(dict)
-    for instruction in instructions:
-        step, component, parameter = instruction
-        steps[step][component] = parameter
-
-    return Class(setup, steps)
+        f"SELECT component, parameter FROM instruction WHERE step_number = 0 AND class_id = {class_id}")
+    setup = data.fetchall()
+    conn.close()
+    for instruction in setup:
+        component, parameter = instruction
+        component = component.upper()
+        match component:
+            case 'PRESENTATION':
+                extract_from_local(download_from_drive(parameter))
+            case _:
+                continue
 
 
-if __name__ == "__main__":
-    classes = search_available_classes()
-    print("Available classes:")
-    print("\tSerial\tName")
-    for k, v in classes.items():
-        print(f"{k}\t{v['serial']}\t{v['name']}")
+def download_from_drive(address):
+    # implement google connection
+    return address + '.pdf'
 
-    print("Choose a class to work with:")
-    while True:
-        try:
-            choice = int(input())
-            if choice not in range(len(classes)):
-                raise ValueError
-            break
-        except ValueError:
-            print("Invalid choice. Try again.")
-            continue
-    create_class(classes[choice]['id'])
+
+def run_instructions(class_id, step):
+    os.chdir(WORKING_PATH)
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    data = c.execute(
+        f"SELECT component, parameter FROM instruction WHERE step_number = {step} AND class_id = {class_id}")
+    step = data.fetchall()
+    print(step)
+
+    conn.close()

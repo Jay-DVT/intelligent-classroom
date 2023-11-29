@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Available Classes</title>
+</head>
+
+<body>
+    <h2>Available Classes:</h2>
+    <table>
+        <tr>
+            <th>Serial</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+        {% for _, class in classes.items() %}
+        <tr>
+            <td>{{ class.serial }}</td>
+            <td>{{ class.name }}</td>
+            <td>
+                <!-- Button to register the class -->
+                <form action="{{ url_for('presentation', serial=class.id) }}" method="post">
+                    <button type="submit">Register</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

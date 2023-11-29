@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Presentation</title>
+</head>
+
+<body>
+    <div id="slide_container">
+        <img id="slide_image" src="{{ url_for('static', filename='image_buffer/page_' + slide|string + '.png') }}"
+            alt="Slide">
+    </div>
+    <audio id="background_music" autoplay {{ 'paused' if not music_playing else '' }}>
+        <source src="{{ url_for('static', filename='path/to/music.mp3') }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        let timeoutDuration = 5000;  // 5 seconds
+
+        function changeSlide() {
+            fetch('/change_slide', { method: 'POST' })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        return response.json();
+                    }
+                })
+                .then(data => {
+                    if (data) {
+                        document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function toggleMusic() {
+            let music = document.getElementById('background_music');
+            if (music.paused) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        }
+
+        setTimeout(changeSlide, timeoutDuration);
+
+    </script>
+</body>
+
+</html>

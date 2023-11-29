@@ -2,7 +2,7 @@ import fitz
 import os
 from db_conn import WORKING_PATH
 
-IMAGE_STORAGE = 'image_buffer'
+IMAGE_STORAGE = 'static/image_buffer'
 
 
 def extract_from_local(address):
