@@ -6,8 +6,7 @@ cur = conn.cursor()
 os.chdir('./projects')
 WORKING_DIRECTORY = os.getcwd()
 IMPORTANT_PARAMS = ['PRESENTATION', 'CLASS']
-INSTRUCTION_START = 'STEP'
-INSTRUCTION_END = 'END'
+INSTRUCTION_START = 'Step'
 files = [f for f in os.listdir() if os.path.isfile(f)]
 Instruction = namedtuple("Instruction", "component parameter")
 
@@ -53,11 +52,11 @@ if __name__ == "__main__":
             instructions = [setup]
             # designate the parameters inside the setup
             command, parameter = parse_line(f.readline())
-            if command != INSTRUCTION_START and parameter != 'SETUP':
-                error("setup is missing")
+            if command != 'Options':
+                error("Options are missing")
             for line in f:
                 command, parameter = parse_line(line)
-                if command == INSTRUCTION_END:
+                if command == INSTRUCTION_START:
                     break
                 setup.append(Instruction(command, parameter))
 
@@ -67,20 +66,17 @@ if __name__ == "__main__":
                     error(f"{param} is missing in setup")
 
             for instruction in setup:
-                if instruction.component == 'CLASS':
+                if instruction.component.upper() == 'CLASS':
                     class_id = get_class_id(instruction.parameter)
 
             step_instructions = []
             for line in f:
                 command, parameter = parse_line(line)
                 if command == INSTRUCTION_START:
-                    step_instructions = []
-                    continue
-                if command == INSTRUCTION_END:
                     instructions.append(step_instructions)
                     step_instructions = []
-                    continue
-                step_instructions.append(Instruction(command, parameter))
+                else:
+                    step_instructions.append(Instruction(command, parameter))
 
         for idx, step in enumerate(instructions):
             for instruction in step:

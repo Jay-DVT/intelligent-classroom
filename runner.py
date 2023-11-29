@@ -10,6 +10,7 @@ COMPONENTS_API_ADDRESS = '127.0.0.1:8000/api/'
 
 class Class:
     def __init__(self, setupHashmap, instructions) -> None:
+        self.counter = 0
         self.presentation_link = setupHashmap['PRESENTATION']
         self.song_link = setupHashmap['SONG'] if 'SONG' in setupHashmap.keys(
         ) else None
@@ -17,19 +18,17 @@ class Class:
         try:
             self.presentation_length = self.load_media()
         except:
+            print("Error loading presentation")
             exit()
 
     def load_media(self):
         # change to extract from google drive first
-        return extract_from_local(self.presentation_link + 'pdf')
+        return extract_from_local(self.presentation_link + '.pdf')
 
-    def start_class(self):
-        for step in self.instructions:
-            for key in step:
-                address = COMPONENTS_API_ADDRESS + \
-                    key.lower() + '/' + step[key].lower()
-                print(address)
-            input()
+    def next_step(self):
+        for k, v in self.instructions[self.counter].items():
+            print(k, v)
+        self.counter += 1
 
 
 def search_available_classes():
@@ -41,11 +40,10 @@ def search_available_classes():
     }
         for i, presentation in enumerate(data.fetchall())
     }
-    print(available)
     return available
 
 
-def run_class(class_id):
+def create_class(class_id):
     print(f"Running class {class_id}")
     data = c.execute(
         f"SELECT step_number, component, parameter FROM instruction WHERE class_id = {class_id}")
@@ -61,8 +59,7 @@ def run_class(class_id):
         step, component, parameter = instruction
         steps[step][component] = parameter
 
-    curr_class = Class(setup, steps)
-    curr_class.start_class()
+    return Class(setup, steps)
 
 
 if __name__ == "__main__":
@@ -82,4 +79,4 @@ if __name__ == "__main__":
         except ValueError:
             print("Invalid choice. Try again.")
             continue
-    run_class(classes[choice]['id'])
+    create_class(classes[choice]['id'])
