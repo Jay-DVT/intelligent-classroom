@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Presentation Slide</title>
+    <!-- Add CSS for styling -->
+    <style>
+        body {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .slide-container {
+            width: 80%;
+            /* Adjust based on your preference */
+            max-width: 1200px;
+            /* Maximum width */
+        }
+
+        .slide-image {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            /* Optional border */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Display the slide image -->
+        <img src="{{ url_for('static', filename='slides/slide_' + slide_number|string + '.jpg') }}"
+            alt="Slide {{ slide_number }}" class="slide-image">
+    </div>
+</body>
+
+</html>
