@@ -1,6 +1,7 @@
 import requests
 from collections import defaultdict
 from db_init import conn
+from pdf_handler import extract_from_local
 
 c = conn.cursor()
 
@@ -13,13 +14,16 @@ class Class:
         self.song_link = setupHashmap['SONG'] if 'SONG' in setupHashmap.keys(
         ) else None
         self.instructions = [instructions[k] for k in instructions]
-        print(self.instructions)
+        try:
+            self.presentation_length = self.load_media()
+        except:
+            exit()
 
     def load_media(self):
-        pass
+        # change to extract from google drive first
+        return extract_from_local(self.presentation_link + 'pdf')
 
     def start_class(self):
-        self.load_media()
         for step in self.instructions:
             for key in step:
                 address = COMPONENTS_API_ADDRESS + \

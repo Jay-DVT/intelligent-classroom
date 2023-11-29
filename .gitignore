@@ -1,6 +1,7 @@
 *.env
 __pycache__
 *.csv
-*.txt
+projects/*.txt
 projects
 runner_venv
+*buffer
