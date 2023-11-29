@@ -1,8 +1,8 @@
 import os
+import sqlite3
 from collections import namedtuple
-from db_conn import conn
+from app import DATABASE_NAME
 
-cur = conn.cursor()
 os.chdir('./projects')
 WORKING_DIRECTORY = os.getcwd()
 IMPORTANT_PARAMS = ['PRESENTATION', 'CLASS']
@@ -26,20 +26,26 @@ def parse_line(line):
 
 
 def get_class_id(serial: str):
+    conn = sqlite3.connect(DATABASE_NAME)
+    cur = conn.cursor()
     data = cur.execute(f"SELECT id FROM class WHERE serial = '{serial}'")
     result = data.fetchone()
+    conn.close()
     if not result:
         error("class not found")
     return result[0]
 
 
 def save_instruction(class_id: int, step: int, component: str, parameter: str):
+    conn = sqlite3.connect(DATABASE_NAME)
+    cur = conn.cursor()
     cur.execute(f"""INSERT INTO instruction 
                 (step_number, component, parameter, class_id)
                 VALUES
                 ({step}, '{component}', '{parameter}', {class_id})
                 """)
     conn.commit()
+    conn.close()
 
 
 if __name__ == "__main__":

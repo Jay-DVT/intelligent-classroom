@@ -1,7 +1,10 @@
 import fitz
 import os
-from db_conn import WORKING_PATH
+from dotenv import load_dotenv
 
+load_dotenv()
+
+WORKING_PATH = os.environ.get('WORKING_PATH')
 IMAGE_STORAGE = 'static/image_buffer'
 
 

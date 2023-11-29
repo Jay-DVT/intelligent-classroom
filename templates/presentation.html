@@ -4,6 +4,8 @@
 <head>
     <title>Presentation</title>
     <!-- Additional head elements -->
+    <script src="https://cdn.socket.io/socket.io-3.1.3.min.js"></script>
+
 </head>
 
 <body>
@@ -17,46 +19,23 @@
     </audio>
 
     <script>
-        let timeoutDuration = 5000;  // 5 seconds for each slide as a starting point
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-        function changeSlide() {
-            fetch('/change_slide', { method: 'POST' })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else {
-                        return response.json();
-                    }
-                })
-                .then(data => {
-                    if (data) {
-                        document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
-                        // Reset the timeout for the next slide
-                        setTimeout(changeSlide, timeoutDuration);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        socket.on('update_slide', function (data) {
+            document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
+        });
 
-        function pollForCurrentSlide() {
-            fetch('/current_slide')
-                .then(response => response.json())
-                .then(data => {
-                    let slide = data.slide;
-                    let slideImage = document.getElementById('slide_image');
-                    if (slideImage.src != '/static/image_buffer/page_' + slide + '.png') {
-                        slideImage.src = '/static/image_buffer/page_' + slide + '.png';
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-
-            setTimeout(pollForCurrentSlide, 2000); // Poll every 2 seconds
-        }
-
-        // Start polling and the initial slide timeout
-        pollForCurrentSlide();
-        setTimeout(changeSlide, timeoutDuration);
-
+        socket.on('redirect_home', function () {
+            window.location.href = "{{ url_for('home') }}";
+        })
+        socket.on('toggle_music', function (data) {
+            var music = document.getElementById('background_music');
+            if (data.music_playing) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        });
     </script>
 </body>
 

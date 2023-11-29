@@ -1,5 +1,7 @@
-from db_conn import conn
+import sqlite3
+from app import DATABASE_NAME
 
+conn = sqlite3.connect(DATABASE_NAME)
 cur = conn.cursor()
 
 cur.execute(f"""
@@ -53,3 +55,5 @@ cur.execute(f"""
             FOREIGN KEY(instruction_id) REFERENCES instruction(id) 
             )
             """)
+
+conn.close()

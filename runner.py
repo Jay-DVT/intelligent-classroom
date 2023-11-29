@@ -1,12 +1,7 @@
-import requests
 import sqlite3
-from collections import defaultdict
-from db_conn import DATABASE_NAME, WORKING_PATH
-from pdf_handler import extract_from_local
 import os
-
-
-COMPONENTS_API_ADDRESS = '127.0.0.1:8000/api/'
+from pdf_handler import extract_from_local
+from app import DATABASE_NAME, WORKING_PATH
 
 
 def search_available_classes():
@@ -29,6 +24,7 @@ def search_available_classes():
 
 
 def setup_class(class_id):
+    print(WORKING_PATH)
     os.chdir(WORKING_PATH)
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
