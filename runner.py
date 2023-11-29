@@ -37,14 +37,18 @@ def setup_class(class_id):
         f"SELECT component, parameter FROM instruction WHERE step_number = 0 AND class_id = {class_id}")
     setup = data.fetchall()
     conn.close()
+    information = {}
     for instruction in setup:
         component, parameter = instruction
         component = component.upper()
         match component:
             case 'PRESENTATION':
-                extract_from_local(download_from_drive(parameter))
+                information['total_slides'] = extract_from_local(
+                    download_from_drive(parameter))
             case _:
                 continue
+
+    return information
 
 
 def download_from_drive(address):

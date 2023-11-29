@@ -3,6 +3,7 @@
 
 <head>
     <title>Presentation</title>
+    <!-- Additional head elements -->
 </head>
 
 <body>
@@ -16,7 +17,7 @@
     </audio>
 
     <script>
-        let timeoutDuration = 5000;  // 5 seconds
+        let timeoutDuration = 5000;  // 5 seconds for each slide as a starting point
 
         function changeSlide() {
             fetch('/change_slide', { method: 'POST' })
@@ -30,20 +31,30 @@
                 .then(data => {
                     if (data) {
                         document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
+                        // Reset the timeout for the next slide
+                        setTimeout(changeSlide, timeoutDuration);
                     }
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-        function toggleMusic() {
-            let music = document.getElementById('background_music');
-            if (music.paused) {
-                music.play();
-            } else {
-                music.pause();
-            }
+        function pollForCurrentSlide() {
+            fetch('/current_slide')
+                .then(response => response.json())
+                .then(data => {
+                    let slide = data.slide;
+                    let slideImage = document.getElementById('slide_image');
+                    if (slideImage.src != '/static/image_buffer/page_' + slide + '.png') {
+                        slideImage.src = '/static/image_buffer/page_' + slide + '.png';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+
+            setTimeout(pollForCurrentSlide, 2000); // Poll every 2 seconds
         }
 
+        // Start polling and the initial slide timeout
+        pollForCurrentSlide();
         setTimeout(changeSlide, timeoutDuration);
 
     </script>
