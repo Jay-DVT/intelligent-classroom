@@ -86,8 +86,8 @@ def run_instructions(class_id, step):
                 address = f"http://{COMPONENTS_API_ADDRESS}?component={component.lower()}&instruction={parameter.lower()}"
                 print(address)
                 try:
-                    response = requests.put(address)
-                    print(response)
+                    # response = requests.put(address)
+                    # print(response)
                     time.sleep(1)
                 except:
                     print("Error")

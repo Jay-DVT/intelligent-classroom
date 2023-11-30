@@ -6,11 +6,38 @@
     <!-- Additional head elements -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <script type="text/javascript">
+        var interrupted = false;
         var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var current_slide = 1  // The current slide number
 
         socket.on('update_slide', function (data) {
+            current_slide = data.slide;
             document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
+            interrupted = false;
+            // run a timeout if there is a delay
+            console.log('Delay: ' + data.delay);
+            if (data.delay > 0) {
+                var used_slide = data.slide;
+                console.log('Delaying slide change by ' + data.delay + ' seconds');
+                setTimeout(changeSlideIfNotInterrupted, data.delay * 1000);
+                changeSlideIfNotInterrupted(used_slide);
+            }
         });
+
+        socket.on('interrupt', function () {
+            interrupted = true;
+        });
+
+        function changeSlideIfNotInterrupted(used_slide) {
+            console.log('Has the slide changed?')
+            console.log(used_slide == current_slide)
+            console.log('Has the slide been interrupted?')
+            console.log(interrupted)
+            if (!interrupted && used_slide == current_slide) {
+                console.log('Changing slide');
+                socket.emit('change_slide', { 'action': 'next' });
+            }
+        }
 
         socket.on('redirect_home', function () {
             window.location.href = '/';  // Redirect to the home page

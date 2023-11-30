@@ -10,15 +10,15 @@ Step 1
     FAN On
     SOUND On
     Screen 1
-    DELAY 10000
 Step 2
     Screen 2
     FAN Off
     Spray 1
+    Delay 5
 Step 3 
     Screen 3
     LIGHT Off
-    DELAY 10000
+    DELAY 4
 Step 4
     Screen 4
     DELAY 10000
