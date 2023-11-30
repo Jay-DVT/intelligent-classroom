@@ -24,7 +24,6 @@ def search_available_classes():
 
 
 def setup_class(class_id):
-    print(WORKING_PATH)
     os.chdir(WORKING_PATH)
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -60,6 +59,5 @@ def run_instructions(class_id, step):
     data = c.execute(
         f"SELECT component, parameter FROM instruction WHERE step_number = {step} AND class_id = {class_id}")
     step = data.fetchall()
-    print(step)
 
     conn.close()

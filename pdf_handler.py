@@ -41,9 +41,6 @@ def clean_local():
         # Check if it's a file and not a directory
         if os.path.isfile(file_path):
             os.remove(file_path)
-            print(f"Deleted {file_path}")
-        else:
-            print(f"Skipped {file_path} (not a file)")
 
 
 if __name__ == "__main__":

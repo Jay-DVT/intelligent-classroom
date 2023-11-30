@@ -4,7 +4,19 @@
 <head>
     <title>Presentation</title>
     <!-- Additional head elements -->
-    <script src="https://cdn.socket.io/socket.io-3.1.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('update_slide', function (data) {
+            document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
+        });
+
+        socket.on('redirect_home', function () {
+            window.location.href = '/';  // Redirect to the home page
+        });
+
+    </script>
 
 </head>
 
@@ -18,25 +30,6 @@
         Your browser does not support the audio element.
     </audio>
 
-    <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-        socket.on('update_slide', function (data) {
-            document.getElementById('slide_image').src = '/static/image_buffer/page_' + data.slide + '.png';
-        });
-
-        socket.on('redirect_home', function () {
-            window.location.href = "{{ url_for('home') }}";
-        })
-        socket.on('toggle_music', function (data) {
-            var music = document.getElementById('background_music');
-            if (data.music_playing) {
-                music.play();
-            } else {
-                music.pause();
-            }
-        });
-    </script>
 </body>
 
 </html>

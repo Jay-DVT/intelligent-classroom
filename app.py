@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from runner import *
 from pdf_handler import clean_local
 
@@ -18,6 +18,7 @@ socketio = SocketIO(app)
 # Global variable to keep track of the current slide and music state
 total_slides = 10  # Total number of slides
 music_playing = False  # State of the music
+current_slide = 1  # Current slide number
 
 
 @app.route('/')
@@ -38,13 +39,13 @@ def presentation(serial):
 
 @socketio.on('change_slide')
 def handle_change_slide(message):
-    global current_slide
+    global current_slide, total_slides
     if message['action'] == 'next':
         current_slide += 1
         if current_slide > total_slides:
             current_slide = 1
-            socketio.emit('redirect_home')
-        socketio.emit('update_slide', {'slide': current_slide})
+            emit('redirect_home', broadcast=True)
+        emit('update_slide', {'slide': current_slide}, broadcast=True)
 
 
 if __name__ == '__main__':
