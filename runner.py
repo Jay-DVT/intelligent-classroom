@@ -1,7 +1,12 @@
 import sqlite3
 import os
+from dotenv import load_dotenv
 from pdf_handler import extract_from_local
 from app import DATABASE_NAME, WORKING_PATH
+
+load_dotenv()
+
+COMPONENTS_API_ADDRESS = os.environ.get('COMPONENTS_API_ADDRESS')
 
 
 def search_available_classes():
@@ -59,5 +64,19 @@ def run_instructions(class_id, step):
     data = c.execute(
         f"SELECT component, parameter FROM instruction WHERE step_number = {step} AND class_id = {class_id}")
     step = data.fetchall()
+    for component, parameter in step:
+        component = component.capitalize()
+        parameter = parameter.lower()
+        match component:
+            case 'Screen':
+                continue
+            case 'Music':
+                continue
+            case 'Delay':
+                continue
+            case _:
+                address = f"{COMPONENTS_API_ADDRESS}?component={component}&instruction={parameter}"
+                print(address)
+    print(step)
 
     conn.close()
