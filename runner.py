@@ -32,12 +32,16 @@ def setup_class(class_id):
     os.chdir(WORKING_PATH)
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
+    data = c.execute(
+        f"SELECT MAX(step_number) FROM instruction WHERE class_id = {class_id}"
+    )
+    information = {}
+    information['total_steps'] = data.fetchone()[0]
 
     data = c.execute(
         f"SELECT component, parameter FROM instruction WHERE step_number = 0 AND class_id = {class_id}")
     setup = data.fetchall()
     conn.close()
-    information = {}
     for instruction in setup:
         component, parameter = instruction
         component = component.upper()
@@ -65,19 +69,19 @@ def run_instructions(class_id, step):
         f"SELECT component, parameter FROM instruction WHERE step_number = {step} AND class_id = {class_id}")
     step = data.fetchall()
     conn.close()
-    delay = None
+    parameters = {}
     for component, parameter in step:
         component = component.capitalize()
         parameter = parameter.lower()
         match component:
             case 'Screen':
-                continue
+                parameters[component] = parameter
             case 'Sound':
-                continue
+                parameters[component] = parameter
             case 'Delay':
-                delay = parameter
+                parameters[component] = parameter
             case _:
                 address = f"{COMPONENTS_API_ADDRESS}?component={component}&instruction={parameter}"
                 print(address)
 
-    print(delay)
+    return parameters

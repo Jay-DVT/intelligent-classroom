@@ -18,9 +18,12 @@ socketio = SocketIO(app)
 # Global variable to keep track of the current slide and music state
 total_slides = 0            # Total number of slides
 music_playing = False       # State of the music
-current_slide = 1           # Current slide number
+current_step = 1           # Current slide number
 presentation_serial = ''    # Serial number of the presentation
 presentating = False        # State of the presentation
+current_delay = 1000000000  # Current delay between slides
+current_slide = 1
+total_steps = 0
 
 
 @app.route('/')
@@ -34,22 +37,37 @@ def home():
 
 @app.route('/presentation/<serial>', methods=['POST'])
 def presentation(serial):
-    global current_slide, total_slides, presentation_serial, presentating
+    global current_slide, total_slides, presentation_serial, presentating, current_delay, music_playing, current_step, total_steps
     presentating = True
     current_slide = 1
     presentation_serial = serial
     information = setup_class(serial)
-    run_instructions(serial, 1)
+    total_steps = information['total_steps']
     total_slides = information['total_slides']
-    return render_template('presentation.html', serial=serial, slide=current_slide)
+    parameters = run_instructions(serial, 1)
+    if 'Sound' in parameters:
+        music_playing = parameters['Sound']
+    if 'Delay' in parameters:
+        current_delay = parameters['Delay']
+    return render_template('presentation.html', serial=serial, slide=parameters['Screen'])
 
 
 @socketio.on('change_slide')
 def handle_change_slide(message):
-    global current_slide, total_slides, presentation_serial, presentating
+    global current_slide, total_slides, presentation_serial, presentating, current_delay, music_playing, current_step, total_steps
     if message['action'] == 'next' and presentating:
-        current_slide += 1
-        if current_slide > total_slides:
+        current_step += 1
+        parameters = run_instructions(presentation_serial, current_step)
+        if 'Screen' in parameters:
+            try:
+                current_slide = int(parameters['Screen'])
+            except ValueError:
+                current_slide = 10000
+        if 'Sound' in parameters:
+            music_playing = parameters['Sound']
+        if 'Delay' in parameters:
+            current_delay = parameters['Delay']
+        if current_slide > total_slides or current_step > total_steps:
             current_slide = 1
             emit('redirect_home', broadcast=True)
         else:

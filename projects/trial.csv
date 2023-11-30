@@ -8,7 +8,7 @@ Step 1
     FAN On
     SOUND On
     Screen 1
-    DELAY 500
+    DELAY 10000
 Step 2
     Screen 2
     FAN Off
@@ -16,11 +16,11 @@ Step 2
 Step 3 
     Screen 3
     LIGHT Off
-    DELAY 500
+    DELAY 10000
 Step 4
     Screen 4
-    DELAY 500
+    DELAY 10000
     Sound Off
 Step 5
-    Screen OFF
-    DELAY 0
+    DELAY 10000
+    FAN On
