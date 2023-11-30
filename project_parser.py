@@ -1,11 +1,16 @@
 import os
 import sqlite3
+from dotenv import load_dotenv
 from collections import namedtuple
-from app import DATABASE_NAME
+
+load_dotenv()
+
+DATABASE_NAME = os.environ.get('DATABASE_NAME')
+WORKING_PATH = os.environ.get('WORKING_PATH')
 
 os.chdir('./projects')
 WORKING_DIRECTORY = os.getcwd()
-IMPORTANT_PARAMS = ['PRESENTATION', 'CLASS']
+IMPORTANT_PARAMS = ['Presentation', 'Class']
 INSTRUCTION_START = 'Step'
 files = [f for f in os.listdir() if os.path.isfile(f)]
 Instruction = namedtuple("Instruction", "component parameter")
@@ -26,6 +31,7 @@ def parse_line(line):
 
 
 def get_class_id(serial: str):
+    os.chdir(WORKING_PATH)
     conn = sqlite3.connect(DATABASE_NAME)
     cur = conn.cursor()
     data = cur.execute(f"SELECT id FROM class WHERE serial = '{serial}'")
