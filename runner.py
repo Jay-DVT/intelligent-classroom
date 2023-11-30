@@ -64,19 +64,20 @@ def run_instructions(class_id, step):
     data = c.execute(
         f"SELECT component, parameter FROM instruction WHERE step_number = {step} AND class_id = {class_id}")
     step = data.fetchall()
+    conn.close()
+    delay = None
     for component, parameter in step:
         component = component.capitalize()
         parameter = parameter.lower()
         match component:
             case 'Screen':
                 continue
-            case 'Music':
+            case 'Sound':
                 continue
             case 'Delay':
-                continue
+                delay = parameter
             case _:
                 address = f"{COMPONENTS_API_ADDRESS}?component={component}&instruction={parameter}"
                 print(address)
-    print(step)
 
-    conn.close()
+    print(delay)
