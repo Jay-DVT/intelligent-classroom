@@ -1,5 +1,7 @@
 import sqlite3
 import os
+import time
+import requests
 from dotenv import load_dotenv
 from pdf_handler import extract_from_local
 from app import DATABASE_NAME, WORKING_PATH
@@ -81,7 +83,13 @@ def run_instructions(class_id, step):
             case 'Delay':
                 parameters[component] = parameter
             case _:
-                address = f"{COMPONENTS_API_ADDRESS}?component={component}&instruction={parameter}"
+                address = f"http://{COMPONENTS_API_ADDRESS}?component={component.lower()}&instruction={parameter.lower()}"
                 print(address)
-
+                try:
+                    response = requests.put(address)
+                    print(response)
+                    time.sleep(1)
+                except:
+                    print("Error")
+                    continue
     return parameters

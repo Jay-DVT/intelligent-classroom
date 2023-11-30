@@ -57,6 +57,7 @@ def handle_change_slide(message):
     global current_slide, total_slides, presentation_serial, presentating, current_delay, music_playing, current_step, total_steps
     if message['action'] == 'next' and presentating:
         current_step += 1
+        print("Current step: ", current_step)
         parameters = run_instructions(presentation_serial, current_step)
         if 'Screen' in parameters:
             try:
@@ -71,7 +72,7 @@ def handle_change_slide(message):
             current_slide = 1
             emit('redirect_home', broadcast=True)
         else:
-            run_instructions(presentation_serial, current_slide)
+            print("Slide changed to: ", current_slide)
             emit('update_slide', {'slide': current_slide}, broadcast=True)
 
 

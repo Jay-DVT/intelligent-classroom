@@ -4,7 +4,9 @@ Options
     Matricula A01562967
     Presentation analisis
 Step 1
-    LIGHT RED
+    LIGHT 100
+    LIGHT On
+    Fan 20
     FAN On
     SOUND On
     Screen 1
@@ -12,7 +14,7 @@ Step 1
 Step 2
     Screen 2
     FAN Off
-    SCENT 1
+    Spray 1
 Step 3 
     Screen 3
     LIGHT Off
